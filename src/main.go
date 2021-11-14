@@ -51,6 +51,11 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 		c.String(http.StatusOK,"Hello！欢迎来到GO世界！")
 	})
 
+	router.GET("/logout", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+		c.SetCookie("user_token", "-1", 1000, "/", "localhost", false, true)
+	})
+
 	router.POST("/login", func(c *gin.Context) {
 
 		passwd := c.DefaultPostForm("passwd","nil")
@@ -70,15 +75,13 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 		//fmt.Printf("pass_sha:%s", uu.Phone)
 		if uu.PassSHA==passwd {
 			//passwd is correct
-			userUid := uuid.Must(uuid.NewV4(),*err)
-			strUsrUid := fmt.Sprintf("%s",userUid)
 			//login success
-			c.Status(http.StatusOK)
-			c.SetCookie("user_token", strUsrUid, 1000, "/", "localhost", false, true)
+			c.String(http.StatusOK,fmt.Sprintf("ok"))
+			c.SetCookie("user_token", uu.ID, 1000, "/", "localhost", false, true)
 
 		}else {
 			//not correct passwd!
-			c.String(http.StatusNotAcceptable, fmt.Sprintln("passwd"))
+			c.String(http.StatusOK, fmt.Sprintf("passwd"))
 		}
 	})
 
