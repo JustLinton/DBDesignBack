@@ -52,8 +52,8 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 	})
 
 	router.GET("/logout", func(c *gin.Context) {
-		c.Status(http.StatusOK)
 		c.SetCookie("user_token", "-1", 1000, "/", "localhost", false, true)
+		c.Status(http.StatusOK)
 	})
 
 	router.POST("/login", func(c *gin.Context) {
@@ -72,12 +72,13 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 
 		var uu = new(User)
 		db.Find(&uu, "pass_sha=?", passwd)
-		//fmt.Printf("pass_sha:%s", uu.Phone)
+
 		if uu.PassSHA==passwd {
+			//fmt.Printf("pass_sha:%s , pass:%s", uu.PassSHA,passwd)
 			//passwd is correct
 			//login success
-			c.String(http.StatusOK,fmt.Sprintf("ok"))
 			c.SetCookie("user_token", uu.ID, 1000, "/", "localhost", false, true)
+			c.String(http.StatusOK,fmt.Sprintf("ok"))
 
 		}else {
 			//not correct passwd!
@@ -113,11 +114,11 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 			newUser := User{strUsrUid, name, phone, email,passwd}
 			db.Create(newUser)
 			//register success
-			c.Status(http.StatusOK)
-			c.SetCookie("user_token", strUsrUid, 1000, "/", "localhost", false, true)
+			c.String(http.StatusOK,fmt.Sprintf("ok"))
+			//c.SetCookie("user_token", strUsrUid, 1000, "/", "localhost", false, true)
 		}else {
 			//phone num is used!
-			c.String(http.StatusNotAcceptable, fmt.Sprintln("phone"))
+			c.String(http.StatusOK, fmt.Sprintf("phone"))
 		}
 
 	})
