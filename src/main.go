@@ -51,6 +51,70 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 		c.String(http.StatusOK,"Hello！欢迎来到GO世界！")
 	})
 
+	router.GET("/profile", func(c *gin.Context) {
+		//get user token
+		usrToken,cerr := c.Cookie("user_token")
+		if cerr!= nil{
+			fmt.Printf("cookie not found\n")
+			c.String(http.StatusOK,fmt.Sprintf("notlogged"))
+			return
+		}
+
+		verbose := c.DefaultQuery("verbose","true")
+
+		type Result struct {
+			Name  string
+			Email string
+		}
+
+		type ResultVerbose struct {
+			Name  string
+			Email string
+		}
+
+		if usrToken !="-1"{
+			var uu[] User
+			db.Find(&uu, "id=?", usrToken)
+			//fmt.Printf("len: %d",len(uu) )
+
+			if len(uu)!=0 {
+				//found.
+				if verbose=="false"{
+					c.JSON(http.StatusOK,Result{
+						Name: uu[0].Name,
+						Email: uu[0].Email,
+					})
+				}else{
+					c.JSON(http.StatusOK,ResultVerbose{
+						Name: uu[0].Name,
+					})
+				}
+			}else{
+				//fmt.Printf("not found\n" )
+				c.String(http.StatusOK,fmt.Sprintf("not found"))
+			}
+		}else{
+			c.String(http.StatusOK,fmt.Sprintf("notlogged"))
+		}
+
+	})
+
+	router.GET("/checkLoggedIn", func(c *gin.Context) {
+		cookie,cerr := c.Cookie("user_token")
+		if cerr!= nil{
+			fmt.Printf("cookie not found\n")
+			c.String(http.StatusOK,fmt.Sprintf("notlogged"))
+			return
+		}
+		//fmt.Printf("%s", cookie)
+		if cookie!="-1"{
+			c.String(http.StatusOK,fmt.Sprintf("ok"))
+		}else{
+			c.String(http.StatusOK,fmt.Sprintf("notlogged"))
+		}
+
+	})
+
 	router.GET("/logout", func(c *gin.Context) {
 		c.SetCookie("user_token", "-1", 1000, "/", "localhost", false, true)
 		c.Status(http.StatusOK)
@@ -71,7 +135,7 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 		//fmt.Println(passwdSHA)
 
 		var uu = new(User)
-		db.Find(&uu, "pass_sha=?", passwd)
+		db.Find(&uu, "phone=?", phone)
 
 		if uu.PassSHA==passwd {
 			//fmt.Printf("pass_sha:%s , pass:%s", uu.PassSHA,passwd)
