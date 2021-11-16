@@ -16,6 +16,7 @@ type User struct {
 	Email string
 	PassSHA string
 	PGID int
+	IDCard string
 }
 
 func InitUsers(db *gorm.DB){
@@ -37,6 +38,8 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 		type Result struct {
 			Name  string
 			Email string
+			PGID int
+			PGName string
 		}
 
 		type ResultVerbose struct {
@@ -49,22 +52,35 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 			db.Find(&uu, "id=?", usrToken)
 			//fmt.Printf("len: %d",len(uu) )
 
-			if len(uu)!=0 {
-				//found.
-				if verbose=="false"{
-					c.JSON(http.StatusOK,Result{
-						Name: uu[0].Name,
-						Email: uu[0].Email,
-					})
-				}else{
-					c.JSON(http.StatusOK,ResultVerbose{
-						Name: uu[0].Name,
-					})
-				}
-			}else{
-				//fmt.Printf("not found\n" )
-				c.String(http.StatusOK,fmt.Sprintf("not found"))
+			if len(uu)==0{
+				c.Status(http.StatusBadRequest)
+				fmt.Printf("profile : user not found\n")
+				return
 			}
+
+			var ppgg[]PermGroup
+			db.Find(&ppgg, "pg_id=?", uu[0].PGID)
+
+			if len(ppgg)==0{
+				c.Status(http.StatusBadRequest)
+				fmt.Printf("profile : PermGroup not found\n")
+				return
+			}
+
+			//found.
+			if verbose=="false"{
+				c.JSON(http.StatusOK,Result{
+					Name: uu[0].Name,
+					Email: uu[0].Email,
+					PGID: uu[0].PGID,
+					PGName: ppgg[0].Name,
+				})
+			}else{
+				c.JSON(http.StatusOK,ResultVerbose{
+					Name: uu[0].Name,
+				})
+			}
+
 		}else{
 			c.String(http.StatusOK,fmt.Sprintf("notlogged"))
 		}
@@ -147,7 +163,7 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 			//phone num haven't used yet
 			fmt.Printf("uuid:%s\n", userUid)
 			strUsrUid := fmt.Sprintf("%s",userUid)
-			newUser := User{strUsrUid, name, phone, email,passwd,0}
+			newUser := User{strUsrUid, name, phone, email,passwd,0,""}
 			db.Create(newUser)
 			//register success
 			c.String(http.StatusOK,fmt.Sprintf("ok"))

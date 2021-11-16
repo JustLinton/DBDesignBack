@@ -42,6 +42,7 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 	})
 
 	entity.InitUsersApi(err,db,router)
+	entity.InitPermissionsApi(err,db,router)
 
 	return router
 }
@@ -53,9 +54,13 @@ func connectDatabase() (*gorm.DB, error) {
 		log.Printf("open database error:%v", err)
 		return nil, err
 	}
+	initEntities(db)
+	return db, nil
+}
 
+func initEntities(db *gorm.DB){
 	entity.InitUsers(db)
 	entity.InitPermGroup(db)
-
-	return db, nil
+	entity.InitPermission(db)
+	entity.InitGroupPermission(db)
 }
