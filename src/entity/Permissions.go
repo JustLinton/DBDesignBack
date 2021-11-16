@@ -7,26 +7,39 @@ import (
 	"net/http"
 )
 
-type Permssion struct {
+type Permission struct {
 	PermID int
 	Name string
 }
 
 func InitPermission(db *gorm.DB){
-	db.AutoMigrate(&Permssion{})
+	db.AutoMigrate(&Permission{})
 
-	var uu[]Permssion
-	db.Find(&uu, "perm_id=?", 0)
+	var uu[]Permission
+	db.Find(&uu, "perm_id=?", 100)
 	if len(uu)==0 {
-		tmp := Permssion{100,"dashboard.user"}
+		tmp := Permission{100,"dashboard.user"}
 		db.Create(tmp)
-		tmp = Permssion{101,"dashboard.waterstaff"}
+		tmp = Permission{101,"dashboard.waterstaff"}
 		db.Create(tmp)
-		tmp = Permssion{102,"dashboard.gasstaff"}
+		tmp = Permission{102,"dashboard.gasstaff"}
 		db.Create(tmp)
-		tmp = Permssion{200,"userman.root"}
+
+		tmp = Permission{200,"function.essentials.dashboard"}
 		db.Create(tmp)
-		tmp = Permssion{300,"waterman.rec"}
+		//--
+		tmp = Permission{201,"function.essentials.report"}
+		db.Create(tmp)
+		//--
+		tmp = Permission{202,"function.essentials.things"}
+		db.Create(tmp)
+		//--
+
+		tmp = Permission{203,"function.waterman.root"}
+		db.Create(tmp)
+		tmp = Permission{204,"function.waterman.rec"}
+		db.Create(tmp)
+		tmp = Permission{205,"function.waterman.userman"}
 		db.Create(tmp)
 	}
 }
@@ -54,7 +67,7 @@ func InitPermissionsApi(err *error,db *gorm.DB,router *gin.Engine) {
 		}
 
 		//found.
-		var ggpp[]GroupPermssion
+		var ggpp[]GroupPermission
 		db.Where("perm_id = ? AND pg_id = ?",permID,uu[0].PGID).Find(&ggpp)
 
 		if len(ggpp)!=0{

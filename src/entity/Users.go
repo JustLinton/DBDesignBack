@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
+	"strings"
 )
 
 // User UserInfo 用户信息
@@ -40,6 +41,9 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 			Email string
 			PGID int
 			PGName string
+			SidebarC map[string]int
+			DashboardC map[string]int
+			FunctionC map[string]int
 		}
 
 		type ResultVerbose struct {
@@ -67,6 +71,8 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 				return
 			}
 
+			sidebarC,dashboardC,functionC:=assignPerms(db,uu)
+
 			//found.
 			if verbose=="false"{
 				c.JSON(http.StatusOK,Result{
@@ -74,6 +80,9 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 					Email: uu[0].Email,
 					PGID: uu[0].PGID,
 					PGName: ppgg[0].Name,
+					SidebarC: sidebarC,
+					DashboardC: dashboardC,
+					FunctionC: functionC,
 				})
 			}else{
 				c.JSON(http.StatusOK,ResultVerbose{
@@ -174,4 +183,38 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 		}
 
 	})
+}
+
+func assignPerms(db *gorm.DB,uu []User) (map[string]int,map[string]int,map[string]int){
+	//user sidebar content
+	var sidebarC map[string]int
+	sidebarC = make(map[string]int)
+	var dashboardC map[string]int
+	dashboardC = make(map[string]int)
+	var functionC map[string]int
+	functionC = make(map[string]int)
+
+	var ggpp[] GroupPermission
+	var permSet[] Permission
+	db.Find(&permSet)
+
+	for i:=0;i<len(permSet);i++{
+		ggpp = []GroupPermission{}
+		db.Where("perm_id = ? AND pg_id = ?",permSet[i].PermID,uu[0].PGID).Find(&ggpp)
+		if strings.Contains(permSet[i].Name,"dashboard."){
+			dashboardC[permSet[i].Name]=len(ggpp)
+		}
+		if strings.Contains(permSet[i].Name,"function."){
+			functionC[permSet[i].Name]=len(ggpp)
+			assignFatherSidebar(permSet[i].Name,&sidebarC,len(ggpp))
+		}
+	}
+	return sidebarC,dashboardC,functionC
+}
+
+func assignFatherSidebar(name string,sidebarC * map[string]int,queryRes int){
+	(*sidebarC)["sidebar.overview"]=1
+	if strings.Contains(name,"waterman."){
+		(*sidebarC)["sidebar.manage"]=queryRes
+	}
 }

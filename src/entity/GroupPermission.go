@@ -2,23 +2,39 @@ package entity
 
 import "github.com/jinzhu/gorm"
 
-type GroupPermssion struct {
+type GroupPermission struct {
 	PermID int
 	PGID int
 }
 
 func InitGroupPermission(db *gorm.DB){
-	db.AutoMigrate(&GroupPermssion{})
-	var uu[]GroupPermssion
-	db.Find(&uu, "perm_id=?", 0)
+	db.AutoMigrate(&GroupPermission{})
+	var uu[]GroupPermission
+	db.Find(&uu, "perm_id=?", 100)
 	if len(uu)==0 {
-		//group user(0)
-		tmp := GroupPermssion{100,0}
+		tmp := GroupPermission{100,0}
 		db.Create(tmp)
-		//group waterStaff(2)
-		tmp = GroupPermssion{101,2}
+		//--
+		tmp = GroupPermission{200,0}
 		db.Create(tmp)
-		tmp = GroupPermssion{300,2}
+
+		tmp = GroupPermission{101,2}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{200,2}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{201,2}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{202,2}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{203,2}
+		db.Create(tmp)
+		tmp = GroupPermission{204,2}
+		db.Create(tmp)
+		tmp = GroupPermission{205,2}
 		db.Create(tmp)
 	}
 }
