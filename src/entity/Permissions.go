@@ -41,6 +41,16 @@ func InitPermission(db *gorm.DB){
 		db.Create(tmp)
 		tmp = Permission{205,"function.waterman.userman"}
 		db.Create(tmp)
+
+		tmp = Permission{206,"function.essentials.nmap"}
+		db.Create(tmp)
+		//--
+		tmp = Permission{207,"function.userman.root"}
+		db.Create(tmp)
+		//--
+		tmp = Permission{208,"function.userman.overview"}
+		db.Create(tmp)
+		//--
 	}
 }
 

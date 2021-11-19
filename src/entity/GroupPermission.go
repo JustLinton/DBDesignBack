@@ -17,6 +17,10 @@ func InitGroupPermission(db *gorm.DB){
 		//--
 		tmp = GroupPermission{200,0}
 		db.Create(tmp)
+		//--
+		tmp = GroupPermission{206,0}
+		db.Create(tmp)
+
 
 		tmp = GroupPermission{101,2}
 		db.Create(tmp)
@@ -35,6 +39,39 @@ func InitGroupPermission(db *gorm.DB){
 		tmp = GroupPermission{204,2}
 		db.Create(tmp)
 		tmp = GroupPermission{205,2}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{206,2}
+		db.Create(tmp)
+
+
+
+
+		tmp = GroupPermission{101,1}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{200,1}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{201,1}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{202,1}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{203,1}
+		db.Create(tmp)
+		tmp = GroupPermission{204,1}
+		db.Create(tmp)
+		tmp = GroupPermission{205,1}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{206,1}
+		db.Create(tmp)
+		//--
+		tmp = GroupPermission{207,1}
+		db.Create(tmp)
+		tmp = GroupPermission{208,1}
 		db.Create(tmp)
 	}
 }

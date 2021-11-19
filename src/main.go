@@ -1,6 +1,7 @@
 package main
 
 import (
+	"db_design/src/API"
 	"db_design/src/entity"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -42,6 +43,7 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 	})
 
 	entity.InitUsersApi(err,db,router)
+	API.InitUsersApi2(err,db,router)
 	entity.InitPermissionsApi(err,db,router)
 
 	return router

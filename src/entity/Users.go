@@ -214,7 +214,9 @@ func assignPerms(db *gorm.DB,uu []User) (map[string]int,map[string]int,map[strin
 
 func assignFatherSidebar(name string,sidebarC * map[string]int,queryRes int){
 	(*sidebarC)["sidebar.overview"]=1
-	if strings.Contains(name,"waterman."){
-		(*sidebarC)["sidebar.manage"]=queryRes
+	if strings.Contains(name,"waterman.") || strings.Contains(name,"userman.") {
+		if(*sidebarC)["sidebar.manage"]<=0{
+			(*sidebarC)["sidebar.manage"]=queryRes
+		}
 	}
 }
