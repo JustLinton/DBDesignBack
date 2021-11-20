@@ -30,7 +30,7 @@ func main() {
 	router.Use(cors.Default())
 
 	// 开始端口监听（进入阻塞）。默认端口是8080,也可以指定端口 r.Run(":80")
-	router.Run(":8080")
+	router.Run(":8081")
 
 }
 

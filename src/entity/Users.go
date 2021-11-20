@@ -25,6 +25,10 @@ func InitUsers(db *gorm.DB){
 }
 
 func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
+
+	//domain := "localhost"
+	domain := "nesto.cupof.beer"
+
 	router.GET("/profile", func(c *gin.Context) {
 		//get user token
 		usrToken,cerr := c.Cookie("user_token")
@@ -113,7 +117,7 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 	})
 
 	router.GET("/logout", func(c *gin.Context) {
-		c.SetCookie("user_token", "-1", 1000, "/", "localhost", false, true)
+		c.SetCookie("user_token", "-1", 1000, "/", domain, false, true)
 		c.Status(http.StatusOK)
 	})
 
@@ -124,6 +128,7 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 
 		if passwd=="nil"||phone=="nil" {
 			c.String(http.StatusNotAcceptable, fmt.Sprintln("network"))
+			return
 		}
 
 		//sha256 check
@@ -138,7 +143,7 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 			//fmt.Printf("pass_sha:%s , pass:%s", uu.PassSHA,passwd)
 			//passwd is correct
 			//login success
-			c.SetCookie("user_token", uu.ID, 1000, "/", "localhost", false, true)
+			c.SetCookie("user_token", uu.ID, 1000, "/", domain, false, true)
 			c.String(http.StatusOK,fmt.Sprintf("ok"))
 
 		}else {
@@ -176,7 +181,7 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 			db.Create(newUser)
 			//register success
 			c.String(http.StatusOK,fmt.Sprintf("ok"))
-			//c.SetCookie("user_token", strUsrUid, 1000, "/", "localhost", false, true)
+			//c.SetCookie("user_token", strUsrUid, 1000, "/", "domain", false, true)
 		}else {
 			//phone num is used!
 			c.String(http.StatusOK, fmt.Sprintf("phone"))

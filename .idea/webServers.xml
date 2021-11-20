@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f3d568c8-e620-4c06-b2b2-c9dbb39e8a61" name="nesto">
+        <fileTransfer rootFolder="/home/lighthouse" accessType="SFTP" host="43.155.74.183" port="22" sshConfigId="9d6b7551-49ba-4c36-b47b-961b1f72cbe5" sshConfig="lighthouse@43.155.74.183:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
