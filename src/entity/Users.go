@@ -26,8 +26,8 @@ func InitUsers(db *gorm.DB){
 
 func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 
-	domain := "localhost"
-	//domain := "nesto.cupof.beer"
+	//domain := "localhost"
+	domain := "nesto.cupof.beer"
 
 	router.GET("/profile", func(c *gin.Context) {
 		//get user token
