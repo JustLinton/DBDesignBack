@@ -51,6 +51,9 @@ func InitPermission(db *gorm.DB){
 		tmp = Permission{208,"function.userman.overview"}
 		db.Create(tmp)
 		//--
+		tmp = Permission{209,"function.userman.edit"}
+		db.Create(tmp)
+		//--
 	}
 }
 
@@ -62,7 +65,7 @@ func InitPermissionsApi(err *error,db *gorm.DB,router *gin.Engine) {
 		fmt.Printf("out: %s",permID )
 
 		if cerr!= nil{
-			c.Status(http.StatusBadRequest)
+			c.String(http.StatusOK, fmt.Sprintf("notlogged"))
 			fmt.Printf("haveperm : cookie not found\n")
 			return
 		}
@@ -71,7 +74,7 @@ func InitPermissionsApi(err *error,db *gorm.DB,router *gin.Engine) {
 		db.Find(&uu, "id=?", userToken)
 
 		if len(uu)==0{
-			c.Status(http.StatusBadRequest)
+			c.String(http.StatusOK, fmt.Sprintf("notlogged"))
 			fmt.Printf("haveperm : user not found\n")
 			return
 		}
