@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
 
@@ -29,6 +30,81 @@ func InitUsersApi2(err *error,db *gorm.DB,router *gin.Engine) {
 		}
 
 		db.Delete(uu[0])
+		c.String(http.StatusOK,"ok")
+	})
+
+	router.GET("/adduser", func(c *gin.Context) {
+
+		//if the user doesn't pass the validation check
+		if !utils.UserValidation(209,db,err,router,c){
+			return
+		}
+
+		uid := fmt.Sprintf("%s",uuid.Must(uuid.NewV4(),*err))
+
+		type Result struct {
+			PGname string
+			Uid string
+			PGNameList []string
+			Gender string
+		}
+
+		//list all pgnames.
+		var ppggNameList []string
+		//clear the array.
+		var ppgg []entity.PermGroup
+		db.Find(&ppgg)
+		for i:=0;i<len(ppgg);i++{
+			ppggNameList = append(ppggNameList,ppgg[i].Name)
+		}
+
+		//found.
+		c.JSON(http.StatusOK,Result{
+			PGname: "业主用户",
+			Uid: uid,
+			PGNameList:ppggNameList,
+			Gender: "男",
+		})
+
+	})
+
+
+	router.POST("/adduser", func(c *gin.Context) {
+
+		//if the user doesn't pass the validation check
+		if !utils.UserValidation(209,db,err,router,c){
+			return
+		}
+
+		var uu[] entity.User
+		db.Find(&uu, "phone=?", c.DefaultPostForm("Phone",c.DefaultPostForm("Phone","")))
+
+		if len(uu)!=0{
+			//phone exists
+			c.String(http.StatusOK,"nok")
+			return
+		}
+
+		var nu = new(entity.User)
+
+		nu.Name = c.DefaultPostForm("Name","")
+		nu.Email = c.DefaultPostForm("Email","")
+		nu.IDCard = c.DefaultPostForm("IdCard","")
+		pgname := c.PostForm("PGname")
+		nu.Phone = c.DefaultPostForm("Phone","")
+		nu.ID = fmt.Sprintf("%s",uuid.Must(uuid.NewV4(),*err))
+		nu.Gender = c.DefaultPostForm("Gender","")
+		pgid:=0
+
+		//use pgname to find the pgid
+		var ppgg[]entity.PermGroup
+		db.Find(&ppgg, "name=?", pgname)
+		if len(ppgg)!=0{
+			pgid=ppgg[0].PGID
+		}
+		nu.PGID=pgid
+
+		db.Create(nu)
 		c.String(http.StatusOK,"ok")
 	})
 
@@ -68,6 +144,7 @@ func InitUsersApi2(err *error,db *gorm.DB,router *gin.Engine) {
 		uu[0].PGID=pgid
 
 		db.Create(uu[0])
+		c.String(http.StatusOK,"ok")
 	})
 
 	router.GET("/userinfo", func(c *gin.Context) {
