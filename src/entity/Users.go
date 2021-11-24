@@ -18,6 +18,7 @@ type User struct {
 	PassSHA string
 	PGID int
 	IDCard string
+	Gender string
 }
 
 func InitUsers(db *gorm.DB){
@@ -177,7 +178,7 @@ func InitUsersApi(err *error,db *gorm.DB,router *gin.Engine) {
 			//phone num haven't used yet
 			fmt.Printf("uuid:%s\n", userUid)
 			strUsrUid := fmt.Sprintf("%s",userUid)
-			newUser := User{strUsrUid, name, phone, email,passwd,0,""}
+			newUser := User{strUsrUid, name, phone, email,passwd,0,"","保密"}
 			db.Create(newUser)
 			//register success
 			c.String(http.StatusOK,fmt.Sprintf("ok"))
