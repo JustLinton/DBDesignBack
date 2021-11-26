@@ -45,6 +45,7 @@ func initAPIs(err *error,db *gorm.DB) *gin.Engine {
 	entity.InitUsersApi(err,db,router)
 	API.InitUsersApi2(err,db,router)
 	entity.InitPermissionsApi(err,db,router)
+	API.InitNotificationApi(err,db,router)
 
 	return router
 }
@@ -65,4 +66,6 @@ func initEntities(db *gorm.DB){
 	entity.InitPermGroup(db)
 	entity.InitPermission(db)
 	entity.InitGroupPermission(db)
+	entity.InitNotificationEntity(db)
+	entity.InitUserAndNotificationEntity(db)
 }

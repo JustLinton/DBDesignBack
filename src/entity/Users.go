@@ -11,7 +11,7 @@ import (
 
 // User UserInfo 用户信息
 type User struct {
-	ID string
+	ID string `gorm:"primary_key"`
 	Name string
 	Phone string
 	Email string
